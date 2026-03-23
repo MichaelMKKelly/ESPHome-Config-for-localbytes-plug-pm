@@ -1,0 +1,15 @@
+{
+  "name": "ESPHome for LocalBytes Plug-PM",
+  "version": "0.0.2",
+  "builds": [
+    {
+      "chipFamily": "ESP8266",
+      "ota": {
+        "md5": "b861e20c85f1da1c7ff2902f94c62b54",
+        "path": "https://michaelmkkelly.github.io/ESPHome-Config-for-localbytes-plug-pm/latest-binary/localbytes-plug-pm.bin.gz",
+        "release_url": "https://github.com/MichaelMKKelly/ESPHome-Config-for-localbytes-plug-pm",
+        "summary": "dummy update for test"
+      }
+    }
+  ]
+}
