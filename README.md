@@ -31,6 +31,7 @@ It comes out the box with either ESPHome or Tasmota Firmware as selected at time
     - Always Off
     - Always On
     - Restore Power Off State
+- Ten Second Power Cycle Button which switches the relay off then after 10 seconds turns it on, this is a great tool if you need to reboot a network device which allows you to connect to the plug so turning it off would result in you unable to turn it back on. This happens entirily on the device so if network is lost it will not interupt it turning back on after 10 seconds. NB: This is a disabled entity by default.
 - Device status diagnostic sensors.
 - Combined calibration action call that can set any or all calibration multipliers in a single action call.
 - Factory Reset by power cycling 7 times within 10 seconds of each cycle.
