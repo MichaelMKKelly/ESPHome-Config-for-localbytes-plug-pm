@@ -72,7 +72,7 @@ substitutions:
   name: localbytes-plug-pm-123456
   friendly_name: Localbytes Plug PM 123456
 packages:
-  MichaelMKKelly.localbytes-plug-pm: github://MichaelMKKelly/ESPHome-Config-for-localbytes-plug-pm/localbytes-plug-pm.yaml
+  MichaelMKKelly.localbytes-plug-pm: github://MichaelMKKelly/ESPHome-Config-for-localbytes-plug-pm/localbytes-plug-pm.yaml@main
 esphome:
   name: ${name}
   name_add_mac_suffix: false

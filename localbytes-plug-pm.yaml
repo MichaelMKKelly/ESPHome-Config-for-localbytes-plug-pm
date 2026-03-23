@@ -82,7 +82,7 @@ preferences:
   flash_write_interval: 5min
 
 dashboard_import:
-  package_import_url: github://MichaelMKKelly/ESPHome-Config-for-localbytes-plug-pm/localbytes-plug-pm.yaml
+  package_import_url: github://MichaelMKKelly/ESPHome-Config-for-localbytes-plug-pm/localbytes-plug-pm.yaml@main
 
 factory_reset:
   resets_required: 7
