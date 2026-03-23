@@ -111,6 +111,6 @@ Note: You may have to "Reconfigure" the device in Home Assistant during this pro
 You can just upload the new firmware binary from this repo to the WebUI. This in most cases should deploy the update and bring the device straight back up, however it is possible that some updates may require you to reconnect the device to your Wi-Fi Network. Please keep this in mind if you are updating devices that you are not nearby to.
 
 ## Credits
-- LocalBytes - For making/whitelabeling/selling the [Smartplug](https://www.mylocalbytes.com/products/smart-plug-pm).
+- LocalBytes - For making/whitelabeling/selling the [Smartplug](https://www.mylocalbytes.com/products/smart-plug-pm), and publishing the [Official Config](https://github.com/LocalBytes/esphome-localbytes-plug).
 - ESPHome Team and the Open Home Foundation - For making [ESPHome](https://esphome.io/).
 - JamesSwift - For their work with their [Orginal Repo](https://github.com/JamesSwift/localbytes-plug-pm) which was forked to make the official firmwre.
