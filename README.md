@@ -32,8 +32,9 @@ It comes out the box with either ESPHome or Tasmota Firmware as selected at time
     - Always On
     - Restore Power Off State
 - Device status diagnostic sensors.
+- Combined calibration action call that can set any or all calibration multipliers in a single action call.
 - Factory Reset by power cycling 7 times within 10 seconds of each cycle.
-- WebUI has the Ability to upload firmware to it directly in `.bin` or `.bin.gz` format. NB: The firmware must be able to fit into the free space available. The exact limit will vary depending on version but will likely be around the 480-500K mark.
+- WebUI has the ability to upload firmware to it directly in `.bin` or `.bin.gz` format. NB: The firmware must be able to fit into the free space available. The exact limit will vary depending on version but will likely be around the 480-500K mark.
 
     WARNING: If flashing to Tasmota from ESPHome then you should flash the `tasmota-lite` image. DO NOT flash `tasmota-minimal` from ESPHome as it will BRICK THE DEVICE.
 
