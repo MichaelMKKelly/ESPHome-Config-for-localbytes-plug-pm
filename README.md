@@ -1,3 +1,5 @@
+# Whilst mostly complete the contents of this repo are still in testing and should not be used yet.
+
 # ESPHome-Config-for-localbytes-plug-pm
 In this repo is an alternative to the [Official Localbytes Config](https://github.com/LocalBytes/esphome-localbytes-plug) for the [LocalBytes Power Monitoring Smart Plug](https://www.mylocalbytes.com/products/smart-plug-pm).
 
