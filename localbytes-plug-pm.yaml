@@ -1,0 +1,441 @@
+substitutions:
+  name: "localbytes-plug-pm"
+  friendly_name: "Localbytes Plug PM"
+  main_icon: "power-socket-uk"  
+  version_number: "1.0.0"
+  device_comment: "ESPHome for LocalBytes Plug PM, Firmware config by MichaelMKKelly."
+  wifi_min_auth: "WPA"
+  wifi_fast_connect: "false"
+  ipv6_enable: "true"
+  sntp_update_interval: 6h
+  sntp_server_1: "0.pool.ntp.org"
+  sntp_server_2: "1.pool.ntp.org"
+  sntp_server_3: "2.pool.ntp.org"
+  timezone: ""
+
+esphome:
+  name: "${name}"
+  friendly_name: "${friendly_name}"
+  comment: "${device_comment}"
+  name_add_mac_suffix: true
+  project:
+    name: MichaelMKKelly.localbytes-plug-pm
+    version: "${version_number}"
+  min_version: 2026.3.0
+  on_boot:
+    - priority: 300
+      then:
+        # Initialize the Relay state based on the Restore Mode Global
+        - select.set_index:
+            id: power_mode
+            index: !lambda |-
+              return id(restore_mode);
+        - lambda: |-
+              switch(id(restore_mode))
+              {
+              case 0:{
+                      id(relay).turn_off();
+                      break;
+                            }
+              case 1:{
+                      id(relay).turn_on();
+                      break;
+                            }
+              default:{
+                      break;
+                            }
+              }
+        # Load calibration multiplication factors
+        - lambda: |-
+              if (id(voltage_multiply) <= 0) id(voltage_multiply) = 0.3;
+              if (id(power_multiply) <= 0) id(power_multiply) = 0.133;
+              if (id(current_multiply) <= 0) id(current_multiply) = 0.85;
+
+globals:
+  - id: restore_mode
+    type: int
+    restore_value: true
+    initial_value: "3" # 0=Off, 1=On, 2=Restore
+  - id: total_energy
+    type: float
+    restore_value: true
+    initial_value: "0.0"
+  - id: voltage_multiply
+    type: float
+    restore_value: true
+    initial_value: "0.3"
+  - id: power_multiply
+    type: float
+    restore_value: true
+    initial_value: "0.133"
+  - id: current_multiply
+    type: float
+    restore_value: true
+    initial_value: "0.85"
+
+esp8266:
+  board: esp01_1m
+  restore_from_flash: true
+  early_pin_init: false
+
+preferences:
+  flash_write_interval: 5min
+
+dashboard_import:
+  package_import_url: github://MichaelMKKelly/ESPHome-Config-for-localbytes-plug-pm/localbytes-plug-pm.yaml
+
+factory_reset:
+  resets_required: 7
+  max_delay: 10s
+
+safe_mode:
+
+logger:
+
+ota:
+  - platform: esphome
+  - platform: web_server    
+
+wifi:
+  ap:
+    ssid: "${friendly_name}"
+  min_auth_mode: "${wifi_min_auth}"
+  fast_connect: "${wifi_fast_connect}"
+
+network:
+  enable_ipv6: "${ipv6_enable}"
+
+captive_portal:
+
+web_server:
+  port: 80
+  version: 3
+
+api:
+  actions: 
+    - action: calibrate_plug
+      variables:
+        set_voltage_calibration: bool
+        actual_voltage: float
+        set_current_calibration: bool
+        actual_current: float
+        set_power_calibration: bool
+        actual_power: float
+      then:
+        - if:
+            condition:
+              - lambda: 'return set_voltage_calibration == true;'
+              - lambda: 'return actual_voltage != 0;'
+              - lambda: 'return isnan(actual_voltage) == false;'
+              - lambda: 'return isblank(actual_voltage) == false;'
+            then:
+              - lambda: |-
+                  id(voltage_multiply) = actual_voltage / id(voltage).raw_state;
+              - number.set:
+                  id: voltage_factor
+                  value: !lambda "return id(voltage_multiply);"
+        - if:
+            condition:
+              - lambda: 'return set_current_calibration == true;'
+              - lambda: 'return actual_current != 0;'
+              - lambda: 'return isnan(actual_current) == false;'
+              - lambda: 'return isblank(actual_current) == false;'
+            then:
+              - lambda: |-
+                  id(current_multiply) = actual_current / id(current).raw_state;
+              - number.set:
+                  id: current_factor
+                  value: !lambda "return id(current_multiply);"
+        - if:
+            condition:
+              - lambda: 'return set_power_calibration == true;'
+              - lambda: 'return actual_power != 0;'
+              - lambda: 'return isnan(actual_power) == false;'
+              - lambda: 'return isblank(actual_power) == false;'
+            then:
+              - lambda: |-
+                  id(power_multiply) = actual_power / id(power).raw_state;
+              - number.set:
+                  id: power_factor
+                  value: !lambda "return id(power_multiply);"
+
+time:
+  - platform: sntp
+    id: sntp_time
+    timezone: "${timezone}"
+    update_interval: ${sntp_update_interval}
+    servers:
+      - "${sntp_server_1}"
+      - "${sntp_server_2}"
+      - "${sntp_server_3}"
+    on_time_sync:
+      then:        
+        - if:
+            condition:
+              lambda: 'return id(device_last_restart).state == "";'
+            then:
+              - text_sensor.template.publish:
+                  id: device_last_restart
+                  state: !lambda 'return id(sntp_time).now().strftime("%a %d %b %Y - %I:%M:%S %p");'
+
+select:
+  - platform: template
+    name: "Power On State"
+    id: power_mode
+    optimistic: true
+    icon: mdi:electric-switch
+    options:
+      - "Always Off"
+      - "Always On"
+      - "Restore Power State"
+    on_value:
+      then:
+        # This updates the global restore_mode to match what the UI says
+        - lambda: |-            
+            id(restore_mode) = i;
+
+text_sensor:
+  - platform: wifi_info
+    ip_address:
+      name: "IP Address"
+      entity_category: diagnostic
+    ssid:
+      name: "Connected SSID"
+      entity_category: diagnostic
+    mac_address:
+      name: "Mac Address"
+      entity_category: diagnostic
+      disabled_by_default: true  
+  - platform: template
+    name: 'Last Restart'
+    id: device_last_restart
+    icon: mdi:clock
+    entity_category: diagnostic
+
+binary_sensor:
+  # Push Button
+  - platform: gpio
+    pin:
+      number: GPIO3
+      mode: INPUT_PULLUP
+      inverted: true
+    name: "Button"
+    on_click:
+      - max_length: 1s
+        then:
+          if:
+            condition:
+              switch.is_off: disable_button
+            then:
+              switch.toggle: relay
+      - min_length: 1.5s
+        max_length: 5s
+        then:
+          switch.toggle: disable_led
+      - min_length: 8s
+        max_length: 12s
+        then:
+          switch.toggle: disable_button
+
+switch:
+  # Relay
+  - platform: gpio
+    name: "Smartplug"
+    icon: "mdi:${main_icon}"
+    pin: GPIO14
+    id: relay
+    restore_mode: RESTORE_DEFAULT_OFF    
+    on_turn_on:
+      if:
+        condition:
+          switch.is_off: disable_led
+        then:
+          output.turn_on: led
+    on_turn_off:
+      - output.turn_off: led
+  - platform: template
+    name: "Disable LED"
+    id: disable_led
+    icon: "mdi:led-variant-off"
+    restore_mode: RESTORE_DEFAULT_OFF
+    optimistic: true
+    on_turn_on:
+      - output.turn_off: led
+    on_turn_off:
+     - if:
+         condition:
+           switch.is_on: relay
+         then:
+           output.turn_on: led
+         else:
+           output.turn_off: led
+  - platform: template
+    name: "Disable Button"
+    id: disable_button
+    icon: "mdi:toggle-switch-off-outline"
+    restore_mode: RESTORE_DEFAULT_OFF
+    optimistic: true
+
+sensor:
+  # Power Monitoring
+  - platform: hlw8012
+    id: power_monitor
+    sel_pin:
+      number: GPIO12
+      inverted: true
+    cf_pin: GPIO4
+    cf1_pin: GPIO5
+    update_interval: 10s
+    voltage:
+      name: "Voltage"
+      id: voltage
+      unit_of_measurement: V
+      accuracy_decimals: 1
+      filters:
+        - lambda: return x * id(voltage_multiply);
+    power:
+      name: "Power"
+      id: power
+      unit_of_measurement: W
+      accuracy_decimals: 0
+      filters:
+        - lambda: return x * id(power_multiply);
+    current:
+      name: "Current"
+      id: current
+      unit_of_measurement: A
+      accuracy_decimals: 3
+      filters:
+        - lambda: return x * id(current_multiply);
+    energy:
+      name: "Energy Since Power on"
+      id: energy
+      icon: mdi:lightning-bolt
+      unit_of_measurement: kWh
+      accuracy_decimals: 3
+      filters:         
+        - multiply: 0.001
+      on_value:
+        then:
+          - lambda: |-
+              static float previous_energy_value = 0.0;
+              float current_energy_value = id(energy).state;
+              id(total_energy) += current_energy_value - previous_energy_value;
+              previous_energy_value = current_energy_value;
+              id(total_energy_sensor).update();
+      disabled_by_default: True
+
+  - platform: template
+    name: "Total Energy"
+    id: total_energy_sensor
+    unit_of_measurement: kWh
+    device_class: "energy"
+    state_class: "total_increasing"
+    icon: mdi:lightning-bolt
+    accuracy_decimals: 3
+    lambda: |-
+      return id(total_energy);
+    update_interval: 10s
+  - platform: total_daily_energy
+    name: "Daily Energy"
+    device_class: energy
+    power_id: power
+    restore: false
+    filters:
+      - multiply: 0.001
+    unit_of_measurement: kWh
+
+  - platform: wifi_signal
+    name: "WiFi Signal dB"
+    id: wifi_signal_db
+    update_interval: 60s
+    entity_category: "diagnostic"
+    disabled_by_default: true
+
+  - platform: copy
+    source_id: wifi_signal_db
+    name: "WiFi Signal Percent"
+    filters:
+      - lambda: return min(max(2 * (x + 100.0), 0.0), 100.0);
+    unit_of_measurement: "Signal %"
+    entity_category: "diagnostic"
+    device_class: ""
+    disabled_by_default: true
+
+number:
+  - platform: template
+    name: "Voltage Calibration Factor"
+    id: voltage_factor
+    icon: "mdi:sine-wave"
+    min_value: 0
+    max_value: 10
+    step: 0.001
+    entity_category: diagnostic
+    mode: box
+    lambda: |-
+      return id(voltage_multiply);
+    set_action:
+      lambda: |-
+        id(voltage_multiply) = x;
+
+  - platform: template
+    name: "Power Calibration Factor"
+    id: power_factor
+    icon: "mdi:flash"
+    min_value: 0
+    max_value: 10
+    step: 0.001
+    entity_category: diagnostic
+    mode: box
+    lambda: |-
+      return id(power_multiply);
+    set_action:
+      lambda: |-
+        id(power_multiply) = x;
+
+  - platform: template
+    name: "Current Calibration Factor"
+    id: current_factor
+    icon: "mdi:current-ac"
+    min_value: 0
+    max_value: 10
+    step: 0.001
+    entity_category: diagnostic
+    mode: box
+    lambda: |-
+      return id(current_multiply);
+    set_action:
+      lambda: |-
+        id(current_multiply) = x;
+
+# LED
+output:
+  - platform: esp8266_pwm
+    id: led
+    pin:
+      number: GPIO13
+      inverted: true
+
+button:
+  - platform: restart
+    name: "Restart"
+    entity_category: config
+  - platform: factory_reset
+    name: "Factory Reset"
+    entity_category: config
+    disabled_by_default: True
+  - platform: safe_mode
+    name: "Safe Mode"
+    internal: false
+    entity_category: config
+    disabled_by_default: True
+  - platform: template
+    id: ten_sec_cycle
+    name: "Ten Second Power Cycle"
+    icon: mdi:timer-10
+    entity_category: diagnostic
+    disabled_by_default: True
+    on_press:
+      - switch.turn_off: relay
+      - delay: 10000ms
+      - switch.turn_on: relay
