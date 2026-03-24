@@ -2,7 +2,7 @@ substitutions:
   name: "localbytes-plug-pm"
   friendly_name: "Localbytes Plug PM"
   main_icon: "power-socket-uk"  
-  version_number: "1.0.0"
+  version_number: "1.0.1"
   device_comment: "ESPHome for LocalBytes Plug PM, Firmware config by MichaelMKKelly."
   wifi_min_auth: "WPA"
   wifi_fast_connect: "false"
@@ -56,10 +56,6 @@ globals:
     type: int
     restore_value: true
     initial_value: "3" # 0=Off, 1=On, 2=Restore
-  - id: total_energy
-    type: float
-    restore_value: true
-    initial_value: "0.0"
   - id: voltage_multiply
     type: float
     restore_value: true
@@ -315,27 +311,9 @@ sensor:
       accuracy_decimals: 3
       filters:         
         - multiply: 0.001
-      on_value:
-        then:
-          - lambda: |-
-              static float previous_energy_value = 0.0;
-              float current_energy_value = id(energy).state;
-              id(total_energy) += current_energy_value - previous_energy_value;
-              previous_energy_value = current_energy_value;
-              id(total_energy_sensor).update();
       disabled_by_default: True
 
-  - platform: template
-    name: "Total Energy"
-    id: total_energy_sensor
-    unit_of_measurement: kWh
-    device_class: "energy"
-    state_class: "total_increasing"
-    icon: mdi:lightning-bolt
-    accuracy_decimals: 3
-    lambda: |-
-      return id(total_energy);
-    update_interval: 10s
+
   - platform: total_daily_energy
     name: "Daily Energy"
     device_class: energy
