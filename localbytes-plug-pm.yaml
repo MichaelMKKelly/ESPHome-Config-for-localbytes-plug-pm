@@ -2,7 +2,7 @@ substitutions:
   name: "localbytes-plug-pm"
   friendly_name: "Localbytes Plug PM"
   main_icon: "power-socket-uk"  
-  version_number: "1.0.1"
+  version_number: "1.0.2"
   device_comment: "ESPHome for LocalBytes Plug PM, Firmware config by MichaelMKKelly."
   wifi_min_auth: "WPA"
   wifi_fast_connect: "false"
@@ -21,7 +21,7 @@ esphome:
   project:
     name: MichaelMKKelly.localbytes-plug-pm
     version: "${version_number}"
-  min_version: 2026.3.0
+  min_version: 2026.4.0
   on_boot:
     - priority: 300
       then:
@@ -126,7 +126,7 @@ api:
               - lambda: 'return isblank(actual_voltage) == false;'
             then:
               - lambda: |-
-                  id(voltage_multiply) = actual_voltage / id(voltage).raw_state;
+                  id(voltage_multiply) = actual_voltage / id(voltage).get_raw_state();
               - number.set:
                   id: voltage_factor
                   value: !lambda "return id(voltage_multiply);"
@@ -138,7 +138,7 @@ api:
               - lambda: 'return isblank(actual_current) == false;'
             then:
               - lambda: |-
-                  id(current_multiply) = actual_current / id(current).raw_state;
+                  id(current_multiply) = actual_current / id(current).get_raw_state();
               - number.set:
                   id: current_factor
                   value: !lambda "return id(current_multiply);"
@@ -150,7 +150,7 @@ api:
               - lambda: 'return isblank(actual_power) == false;'
             then:
               - lambda: |-
-                  id(power_multiply) = actual_power / id(power).raw_state;
+                  id(power_multiply) = actual_power / id(power).get_raw_state();
               - number.set:
                   id: power_factor
                   value: !lambda "return id(power_multiply);"
