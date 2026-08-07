@@ -399,5 +399,5 @@ button:
       then:
         - lambda: |-            
             id(total_energy) = 0.0;
-            id(previous_energy_value) = id(energy);
+            id(previous_energy_value) = id(energy).state();
             id(total_energy_sensor).update();
