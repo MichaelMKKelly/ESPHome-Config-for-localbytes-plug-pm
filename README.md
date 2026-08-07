@@ -30,10 +30,11 @@ It comes out the box with either ESPHome or Tasmota Firmware as selected at time
     - Always Off
     - Always On
     - Restore Power Off State
-- Combined calibration action call that can set any or all calibration multipliers in a single action call.
-- Action Call to perform a delayed power cycle of a attached device in specified seconds. This is a great tool if you need to reboot a network device which allows you to connect to the plug so turning it off would result in you unable to turn it back on. This happens entirily on the device so if network is lost it will not interupt it turning back on after the specided time.
-- Factory Reset by power cycling 7 times within 10 seconds of each cycle.
 - Integrated Update System to stay up to date with the latest releases of the firmware without rebuilding it yourself.
+- Factory Reset by power cycling 7 times within 10 seconds of each cycle.
+- Combined calibration action call that can set any or all calibration multipliers in a single action call.
+- Action call to perform a delayed power cycle of a attached device in specified seconds. This is a great tool if you need to reboot a network device which allows you to connect to the plug so turning it off would result in you unable to turn it back on. This happens entirily on the device so if network is lost it will not interupt it turning back on after the specided time.
+- Action call to force an update which reinstalls the current latest version even if it is the same version as currently installed.
 
 ## Wishlist Features that are not implemented
 ### WebUI for direct control via browser
