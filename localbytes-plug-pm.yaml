@@ -67,7 +67,9 @@ globals:
     type: float
     restore_value: yes
     initial_value: '0.0'
-
+  - id: previous_energy_value
+    type: float
+    initial_value: '0.0'
 esp8266:
   board: esp01_1m
   restore_from_flash: true
@@ -299,10 +301,9 @@ sensor:
     disabled_by_default: True
     on_value:
        then:
-         - lambda: |-
-             static float previous_energy_value = 0.0;             
-             id(total_energy) += (x - previous_energy_value);
-             previous_energy_value = x;
+         - lambda: |-             
+             id(total_energy) += (x - id(previous_energy_value));
+             id(previous_energy_value) = x;
              id(total_energy_sensor).update();
   - platform: template
     name: "Total Energy"
@@ -396,7 +397,7 @@ button:
     disabled_by_default: True
     on_press:
       then:
-        - lambda: |-                        
+        - lambda: |-            
             id(total_energy) = 0.0;
-            previous_energy_value = id(energy);
+            id(previous_energy_value) = id(energy);
             id(total_energy_sensor).update();
