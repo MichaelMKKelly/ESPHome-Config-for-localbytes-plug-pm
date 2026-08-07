@@ -2,7 +2,7 @@ substitutions:
   name: "localbytes-plug-pm"
   friendly_name: "Localbytes Plug PM"
   main_icon: "power-socket-uk"  
-  version_number: "0.2.0"
+  version_number: "0.2.1"
   device_comment: "ESPHome for LocalBytes Plug PM, Firmware config by MichaelMKKelly."
   wifi_min_auth: "WPA"
   wifi_fast_connect: "false"
@@ -288,7 +288,7 @@ sensor:
       name: "Current"
       id: current
       unit_of_measurement: A
-      accuracy_decimals: 3
+      accuracy_decimals: 1
       filters:
         - lambda: return x * id(current_multiply);          
   - platform: integration
