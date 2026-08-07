@@ -4,9 +4,9 @@
 In this repo is an alternative to the [Official Localbytes Config](https://github.com/LocalBytes/esphome-localbytes-plug) for the [LocalBytes Power Monitoring Smart Plug](https://www.mylocalbytes.com/products/smart-plug-pm).
 
 ## Disclaimer
-I am not affiliated with LocalBytes in any way.
+I am not an employee of LocalBytes.
 
-You are flashing a firmware onto your device which is not from the manufacturer. You should be careful when doing things like this and check where the firmware comes from and what it does.
+By using this you are flashing a firmware onto your device which is not from the manufacturer. You should be careful when doing things like this and check where the firmware comes from and what it does.
 
 ## Why do this?
 The official firmware has a specific feature set and has not seen much in the way of changes over time as ESPHome has itself become more featureful and optimised.
@@ -15,7 +15,7 @@ The official firmware can also be a little slow to update which in some cases ha
 
 I am producing this as an alternate option with a slightly different feature set and kept more up to date with the offerings of ESPHome.
 
-This also reduced my device count in the ESPHome builder tool which want to be individually compiled and uploaded to devices witth fixed credentials. Instead I can keep them more as a "Just Works" Product.
+This also reduced my device count in the ESPHome builder tool which want to be individually compiled and uploaded to devices witth fixed credentials. Instead I can keep them more as a "Just Works" product.
 
 ## The Device
 The Smart Plug itself runs a ESP8266 family chip (Specifically a ESP8285) with 1MB of onboard flash to work with.
@@ -39,8 +39,8 @@ It comes out the box with either ESPHome or Tasmota Firmware as selected at time
 ### WebUI for direct control via browser
 This is not currently able to be implemented due to limitations of the hardware, The firmware becomes too big. This may in theory be possible if I drop IPv6 Support but on balance I believe that IPv6 is more useful.
 
-### Button's to flash to alternate firmwares directly.
-Due to memory limits this is hard to implement in a stable manner.
+### Actions to flash to alternate firmwares directly.
+Due to hardware limits this is something that is currently hard to implement.
 
 ## Install Instructions
 ### From a Plug running ESPHome Already
@@ -85,10 +85,12 @@ wifi:
   ssid: !secret wifi_ssid
   password: !secret wifi_password
 ```
-TODO: Finish This implementation
-- OPTIONAL: Once you have flashed the device in this manner if you prefer to not use the ESPHome builder tool any longer....
 
-Note: You may have to "Reconfigure" the device in Home Assistant during this process if you adding/removing/changing encryption keys.
+- OPTIONAL: Once you have flashed the device in this manner if you prefer to not use the ESPHome builder tool any longer then you can delete the device from the tool and then use the force update action call from the Home Assistant action tools page.
+
+![alt text](force-update-action.png)
+
+Note: You may have to reconnect the device to wifi and/or "Reconfigure" the device in Home Assistant during this process.
 
 ### From a Plug running Tasmota
 - Connect the plug to your Wi-Fi network if you have not done so already.
