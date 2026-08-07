@@ -26,25 +26,21 @@ It comes out the box with either ESPHome or Tasmota Firmware as selected at time
 - Wi-Fi Provisioning.
 - IPv6 Support.
 - Full compatibility with Home Assistant without any other setup.
-- Fully Functional WebUI to allow for direct control outside of Home Assistant.
 - Power on default state can be set as:
     - Always Off
     - Always On
     - Restore Power Off State
-- Ten Second Power Cycle Button which switches the relay off then after 10 seconds turns it on, this is a great tool if you need to reboot a network device which allows you to connect to the plug so turning it off would result in you unable to turn it back on. This happens entirily on the device so if network is lost it will not interupt it turning back on after 10 seconds. NB: This is a disabled entity by default.
-- Device status diagnostic sensors.
 - Combined calibration action call that can set any or all calibration multipliers in a single action call.
+- Action Call to perform a delayed power cycle of a attached device in specified seconds. This is a great tool if you need to reboot a network device which allows you to connect to the plug so turning it off would result in you unable to turn it back on. This happens entirily on the device so if network is lost it will not interupt it turning back on after the specided time.
 - Factory Reset by power cycling 7 times within 10 seconds of each cycle.
-- WebUI has the ability to upload firmware to it directly in `.bin` or `.bin.gz` format. NB: The firmware must be able to fit into the free space available. The exact limit will vary depending on version but will likely be around the 480-500K mark.
-
-    WARNING: If flashing to Tasmota from ESPHome then you should flash the `tasmota-lite` image. DO NOT flash `tasmota-minimal` from ESPHome as it will BRICK THE DEVICE.
+- Integrated Update System to stay up to date with the latest releases of the firmware without rebuilding it yourself.
 
 ## Wishlist Features that are not implemented
-### Home Assistant integegrated auto update system.
-This is a really useful feature but the hardware limits of this device make implementing it impossible at this stage, However if some optimisations come into ESPHome in the future then it is something I would like to revisit. However for now precompiled updates can be installed by uploading them to the WebUI.
+### WebUI for direct control via browser
+This is not currently able to be implemented due to limitations of the hardware, The firmware becomes too big. This may in theory be possible if I drop IPv6 Support but on balance I believe that IPv6 is more useful.
 
 ### Button's to flash to alternate firmwares directly.
-For the same reasons as the update system this is not possible. However as with updates, It is possible to upload other firmwares to the WebUI as long as they fit into the space limitations.
+Due to memory limits this is hard to implement in a stable manner.
 
 ## Install Instructions
 ### From a Plug running ESPHome Already
@@ -89,8 +85,8 @@ wifi:
   ssid: !secret wifi_ssid
   password: !secret wifi_password
 ```
-
-- OPTIONAL: Once you have flashed the device in this manner if you prefer to not use the ESPHome builder tool any longer, you can delete the device from the builder tool then use the WebUI to upload the latest precompiled version of the firmware from the releases section of this repo.
+TODO: Finish This implementation
+- OPTIONAL: Once you have flashed the device in this manner if you prefer to not use the ESPHome builder tool any longer....
 
 Note: You may have to "Reconfigure" the device in Home Assistant during this process if you adding/removing/changing encryption keys.
 
@@ -110,9 +106,6 @@ Note: You may have to "Reconfigure" the device in Home Assistant during this pro
 - Now you should upload the latest precomppiled binary of the Firmware from the releases section of this repo. By selecting the file and pressing "Start Upgrade"
 - After a moment the Smartplug will restart and you will now neeed to reconnect it to your Wi-Fi network (This time as a ESPHome Device).
 - It should now be discovered in Home Assistant (if not then you may need to manully add it by IP Address)
-
-## Updating to a New Version
-You can just upload the new firmware binary from this repo to the WebUI. This in most cases should deploy the update and bring the device straight back up, however it is possible that some updates may require you to reconnect the device to your Wi-Fi Network. Please keep this in mind if you are updating devices that you are not nearby to.
 
 ## Credits
 - LocalBytes - For making/whitelabeling/selling the [Smartplug](https://www.mylocalbytes.com/products/smart-plug-pm), and publishing the [Official Config](https://github.com/LocalBytes/esphome-localbytes-plug).
