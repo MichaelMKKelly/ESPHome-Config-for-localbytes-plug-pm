@@ -2,16 +2,11 @@ substitutions:
   name: "localbytes-plug-pm"
   friendly_name: "Localbytes Plug PM"
   main_icon: "power-socket-uk"  
-  version_number: "1.0.2"
+  version_number: "0.1.0"
   device_comment: "ESPHome for LocalBytes Plug PM, Firmware config by MichaelMKKelly."
   wifi_min_auth: "WPA"
   wifi_fast_connect: "false"
   ipv6_enable: "true"
-  sntp_update_interval: 6h
-  sntp_server_1: "0.pool.ntp.org"
-  sntp_server_2: "1.pool.ntp.org"
-  sntp_server_3: "2.pool.ntp.org"
-  timezone: ""
 
 esphome:
   name: "${name}"
@@ -55,7 +50,7 @@ globals:
   - id: restore_mode
     type: int
     restore_value: true
-    initial_value: "3" # 0=Off, 1=On, 2=Restore
+    initial_value: "0" # 0=Off, 1=On, 2=Restore
   - id: voltage_multiply
     type: float
     restore_value: true
@@ -68,13 +63,17 @@ globals:
     type: float
     restore_value: true
     initial_value: "0.85"
+  - id: total_energy
+    type: float
+    restore_value: yes
+    initial_value: '0.0'
 
 esp8266:
   board: esp01_1m
   restore_from_flash: true
   early_pin_init: false
 
-preferences:
+preferences:  
   flash_write_interval: 5min
 
 dashboard_import:
@@ -86,11 +85,22 @@ factory_reset:
 
 safe_mode:
 
-logger:
+#Disabled for production firmware as not needed and saves firmware size and system memory for stability 
+#logger:
 
 ota:
   - platform: esphome
-  - platform: web_server    
+  - platform: http_request
+
+http_request:
+  verify_ssl: False
+  tls_buffer_size_rx: 16384
+
+update:
+  - platform: http_request
+    name: "ESPHome for LocalBytes Smart Plug PM"
+    id: firmwareupdate
+    source: https://michaelmkkelly.github.io/ESPHome-Config-for-localbytes-plug-pm/latest-binary/updatemanifest.json
 
 wifi:
   ap:
@@ -102,10 +112,6 @@ network:
   enable_ipv6: "${ipv6_enable}"
 
 captive_portal:
-
-web_server:
-  port: 80
-  version: 3
 
 api:
   actions: 
@@ -154,25 +160,17 @@ api:
               - number.set:
                   id: power_factor
                   value: !lambda "return id(power_multiply);"
+    - action: power_cycle_with_delay
+      variables:
+        delay_seconds: int
+      then:
+      - switch.turn_off: relay
+      - delay: !lambda "return (delay_seconds) * 1000;"
+      - switch.turn_on: relay              
 
 time:
-  - platform: sntp
-    id: sntp_time
-    timezone: "${timezone}"
-    update_interval: ${sntp_update_interval}
-    servers:
-      - "${sntp_server_1}"
-      - "${sntp_server_2}"
-      - "${sntp_server_3}"
-    on_time_sync:
-      then:        
-        - if:
-            condition:
-              lambda: 'return id(device_last_restart).state == "";'
-            then:
-              - text_sensor.template.publish:
-                  id: device_last_restart
-                  state: !lambda 'return id(sntp_time).now().strftime("%a %d %b %Y - %I:%M:%S %p");'
+  - platform: homeassistant
+    id: homeassistant_time
 
 select:
   - platform: template
@@ -186,27 +184,9 @@ select:
       - "Restore Power State"
     on_value:
       then:
-        # This updates the global restore_mode to match what the UI says
+        # This updates the global restore_mode to a selected setting.
         - lambda: |-            
             id(restore_mode) = i;
-
-text_sensor:
-  - platform: wifi_info
-    ip_address:
-      name: "IP Address"
-      entity_category: diagnostic
-    ssid:
-      name: "Connected SSID"
-      entity_category: diagnostic
-    mac_address:
-      name: "Mac Address"
-      entity_category: diagnostic
-      disabled_by_default: true  
-  - platform: template
-    name: 'Last Restart'
-    id: device_last_restart
-    icon: mdi:clock
-    entity_category: diagnostic
 
 binary_sensor:
   # Push Button
@@ -216,6 +196,7 @@ binary_sensor:
       mode: INPUT_PULLUP
       inverted: true
     name: "Button"
+    disabled_by_default: True
     on_click:
       - max_length: 1s
         then:
@@ -236,11 +217,11 @@ binary_sensor:
 switch:
   # Relay
   - platform: gpio
-    name: "Smartplug"
+    name: "Smart Plug"
     icon: "mdi:${main_icon}"
     pin: GPIO14
     id: relay
-    restore_mode: RESTORE_DEFAULT_OFF    
+    restore_mode: RESTORE_DEFAULT_OFF
     on_turn_on:
       if:
         condition:
@@ -302,43 +283,49 @@ sensor:
       unit_of_measurement: A
       accuracy_decimals: 3
       filters:
-        - lambda: return x * id(current_multiply);
-    energy:
-      name: "Energy Since Power on"
-      id: energy
-      icon: mdi:lightning-bolt
-      unit_of_measurement: kWh
-      accuracy_decimals: 3
-      filters:         
-        - multiply: 0.001
-      disabled_by_default: True
-
-
-  - platform: total_daily_energy
-    name: "Daily Energy"
+        - lambda: return x * id(current_multiply);          
+  - platform: integration
+    name: 'Energy Since Power on'
+    id: energy
+    sensor: power
+    time_unit: h    
+    state_class: total_increasing
     device_class: energy
+    icon: mdi:lightning-bolt
+    accuracy_decimals: 2
+    unit_of_measurement: kWh
+    filters:         
+      - multiply: 0.001
+    disabled_by_default: True
+    on_value:
+       then:
+         - lambda: |-
+             static float previous_energy_value = 0.0;             
+             id(total_energy) += (x - previous_energy_value);
+             previous_energy_value = x;
+             id(total_energy_sensor).update();
+  - platform: template
+    name: "Total Energy"
+    id: total_energy_sensor
+    unit_of_measurement: kWh
+    state_class: total_increasing
+    device_class: energy
+    icon: mdi:lightning-bolt
+    accuracy_decimals: 2
+    lambda: |-
+      return id(total_energy);
+    update_interval: 60s
+  - platform: total_daily_energy
+    name: "Daily Energy"    
+    device_class: energy
+    state_class: total_increasing
+    icon: mdi:lightning-bolt
+    accuracy_decimals: 2
     power_id: power
     restore: false
     filters:
       - multiply: 0.001
     unit_of_measurement: kWh
-
-  - platform: wifi_signal
-    name: "WiFi Signal dB"
-    id: wifi_signal_db
-    update_interval: 60s
-    entity_category: "diagnostic"
-    disabled_by_default: true
-
-  - platform: copy
-    source_id: wifi_signal_db
-    name: "WiFi Signal Percent"
-    filters:
-      - lambda: return min(max(2 * (x + 100.0), 0.0), 100.0);
-    unit_of_measurement: "Signal %"
-    entity_category: "diagnostic"
-    device_class: ""
-    disabled_by_default: true
 
 number:
   - platform: template
@@ -386,8 +373,8 @@ number:
       lambda: |-
         id(current_multiply) = x;
 
-# LED
 output:
+  # LED
   - platform: esp8266_pwm
     id: led
     pin:
@@ -398,22 +385,18 @@ button:
   - platform: restart
     name: "Restart"
     entity_category: config
+    disabled_by_default: True
   - platform: factory_reset
     name: "Factory Reset"
     entity_category: config
     disabled_by_default: True
-  - platform: safe_mode
-    name: "Safe Mode"
-    internal: false
+  - platform: template
+    name: "Reset Total Energy"
     entity_category: config
     disabled_by_default: True
-  - platform: template
-    id: ten_sec_cycle
-    name: "Ten Second Power Cycle"
-    icon: mdi:timer-10
-    entity_category: diagnostic
-    disabled_by_default: True
     on_press:
-      - switch.turn_off: relay
-      - delay: 10000ms
-      - switch.turn_on: relay
+      then:
+        - lambda: |-                        
+            id(total_energy) = 0.0;
+            previous_energy_value = id(energy);
+            id(total_energy_sensor).update();
