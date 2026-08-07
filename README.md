@@ -15,12 +15,12 @@ The official firmware can also be a little slow to update which in some cases ha
 
 I am producing this as an alternate option with a slightly different feature set and kept more up to date with the offerings of ESPHome.
 
-This also reduced my device count in the ESPHome builder tool which want to be individually compiled and uploaded to devices witth fixed credentials. Instead I can keep them more as a "Just Works" product.
+This also reduced my device count in the ESPHome builder tool which wants to be individually compiled and uploaded to devices with fixed credentials. Instead I can keep them more as a "Just Works" product.
 
 ## The Device
-The Smart Plug itself runs a ESP8266 family chip (Specifically a ESP8285) with 1MB of onboard flash to work with.
+The Smart Plug itself runs a ESP8266 family chip (Specifically an ESP8285) with 1MB of onboard flash to work with.
 
-It comes out the box with either ESPHome or Tasmota Firmware as selected at time of purchase. There is no hardware difference between them and they can be flashed back and forth as needed.
+It comes out of the box with either ESPHome or Tasmota Firmware as selected at time of purchase. There is no hardware difference between them and they can be flashed back and forth as needed.
 
 ## Features
 - Wi-Fi Provisioning.
@@ -33,7 +33,7 @@ It comes out the box with either ESPHome or Tasmota Firmware as selected at time
 - Integrated Update System to stay up to date with the latest releases of the firmware without rebuilding it yourself.
 - Factory Reset by power cycling 7 times within 10 seconds of each cycle.
 - Combined calibration action call that can set any or all calibration multipliers in a single action call.
-- Action call to perform a delayed power cycle of a attached device in specified seconds. This is a great tool if you need to reboot a network device which allows you to connect to the plug so turning it off would result in you unable to turn it back on. This happens entirily on the device so if network is lost it will not interupt it turning back on after the specided time.
+- Action call to perform a delayed power cycle of an attached device in specified seconds. This is a great tool if you need to reboot a network device which allows you to connect to the plug so turning it off would result in you unable to turn it back on. This happens entirely on the device so if the network connection is lost it will not interrupt it turning back on after the specified time.
 - Action call to force an update which reinstalls the current latest version even if it is the same version as currently installed.
 
 ## Wishlist Features that are not implemented
@@ -105,12 +105,12 @@ Note: You may have to reconnect the device to wifi and/or "Reconfigure" the devi
   `http://ota.tasmota.com/tasmota/release/tasmota-minimal.bin.gz`
 
   Then press "Start Upgrade".
-- After a few moments you will be greated by the a notice saying "MINIMAL firmware please upgrade". Again you should select "Firmware Upgrade".
-- Now you should upload the latest precomppiled binary of the Firmware from the releases section of this repo. By selecting the file and pressing "Start Upgrade"
-- After a moment the Smartplug will restart and you will now neeed to reconnect it to your Wi-Fi network (This time as a ESPHome Device).
-- It should now be discovered in Home Assistant (if not then you may need to manully add it by IP Address)
+- After a few moments you will be greeted by a notice saying "MINIMAL firmware please upgrade". Again you should select "Firmware Upgrade".
+- Now you should upload the latest precompiled binary of the Firmware from the releases section of this repo. By selecting the file and pressing "Start Upgrade"
+- After a moment the Smartplug will restart and you will now need to reconnect it to your Wi-Fi network (This time as a ESPHome Device).
+- It should now be discovered in Home Assistant (if not then you may need to manually add it by IP address)
 
 ## Credits
 - LocalBytes - For making/whitelabeling/selling the [Smartplug](https://www.mylocalbytes.com/products/smart-plug-pm), and publishing the [Official Config](https://github.com/LocalBytes/esphome-localbytes-plug).
 - ESPHome Team and the Open Home Foundation - For making [ESPHome](https://esphome.io/).
-- JamesSwift - For their work with their [Orginal Repo](https://github.com/JamesSwift/localbytes-plug-pm) which was forked to make the official firmwre.
+- JamesSwift - For their work with their [Orginal Repo](https://github.com/JamesSwift/localbytes-plug-pm) which was forked to make the official firmware.
