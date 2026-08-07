@@ -1,0 +1,79 @@
+substitutions:
+  name: "localbytes-plug-pm-min"
+  friendly_name: "Localbytes Plug PM"
+  main_icon: "power-socket-uk"  
+  version_number: "0.2.1"
+  device_comment: "ESPHome for LocalBytes Plug PM, Firmware config by MichaelMKKelly."
+  wifi_min_auth: "WPA"
+  wifi_fast_connect: "false"
+  ipv6_enable: "false"
+
+esphome:
+  name: "${name}"
+  friendly_name: "${friendly_name}"
+  comment: "${device_comment}"
+  name_add_mac_suffix: true
+  project:
+    name: MichaelMKKelly.localbytes-plug-pm
+    version: "${version_number}"
+  min_version: 2026.4.0
+
+globals:
+  - id: restore_mode
+    type: int
+    restore_value: true
+    initial_value: "0" # 0=Off, 1=On, 2=Restore
+  - id: voltage_multiply
+    type: float
+    restore_value: true
+    initial_value: "0.3"
+  - id: power_multiply
+    type: float
+    restore_value: true
+    initial_value: "0.133"
+  - id: current_multiply
+    type: float
+    restore_value: true
+    initial_value: "0.85"
+  - id: total_energy
+    type: float
+    restore_value: yes
+    initial_value: '0.0'
+  - id: previous_energy_value
+    type: float
+    initial_value: '0.0'
+esp8266:
+  board: esp01_1m
+  restore_from_flash: true
+  early_pin_init: false
+
+preferences:  
+  flash_write_interval: 5min
+
+dashboard_import:
+  package_import_url: github://MichaelMKKelly/ESPHome-Config-for-localbytes-plug-pm/localbytes-plug-pm-min.yaml@main
+
+factory_reset:
+  resets_required: 7
+  max_delay: 10s
+
+safe_mode:
+
+logger:
+
+ota:
+  - platform: esphome
+
+wifi:
+  ap:
+    ssid: "${friendly_name}"
+  min_auth_mode: "${wifi_min_auth}"
+  fast_connect: "${wifi_fast_connect}"
+
+network:
+  enable_ipv6: "${ipv6_enable}"
+
+captive_portal:
+
+api:
+  
