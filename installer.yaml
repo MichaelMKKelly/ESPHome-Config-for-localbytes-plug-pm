@@ -1,0 +1,97 @@
+substitutions:  
+  name: "lb-plug-installer"
+  friendly_name: "Localbytes Plug PM"
+  main_icon: "power-socket-uk"
+  version_number: "0.2.0"
+  device_comment: "V${version_number} - Designed to install more useful Firmware - by MichaelMKKelly."
+  wifi_min_auth: "WPA"
+  ipv6_enable: "true"
+
+esphome:
+  name: "${name}"
+  name_add_mac_suffix: true
+  friendly_name: "${friendly_name}"
+  comment: "${device_comment}"
+  project:
+    name: "MichaelMKKelly.lb-bulb-installer"
+    version: "${version_number}"
+  min_version: 2026.4.0
+  on_boot: 
+    then:
+        - text_sensor.template.publish:
+            id: installer_status
+            state: ESPHome Loaded
+esp8266:
+  board: esp8285
+  
+ota:
+  - platform: esphome
+  - platform: web_server
+  - platform: http_request
+    on_begin: 
+      then:
+        - text_sensor.template.publish:
+            id: installer_status
+            state: "Starting..."
+    on_progress: 
+      then:
+        - text_sensor.template.publish:
+            id: installer_status
+            state: "In Progress..."  
+    on_end: 
+      then:
+        - text_sensor.template.publish:
+            id: installer_status
+            state: "Completed... Rebooting..."  
+    on_error: 
+      then:
+        - text_sensor.template.publish:
+            id: installer_status
+            state: "Error..."  
+
+wifi:
+  ap:
+    ssid: "${friendly_name}"
+  min_auth_mode: "${wifi_min_auth}"
+
+captive_portal:
+
+safe_mode:  
+
+web_server:
+  port: 80
+  version: 3
+
+http_request:
+  verify_ssl: False
+  tls_buffer_size_rx: 16384
+
+text_sensor:
+  - platform: template
+    name: 'Status'
+    id: installer_status
+    entity_category: 'diagnostic'
+
+button:
+  - platform: template
+    name: "Install Latest Version of this Installer"
+    on_press: 
+      then:
+        - ota.http_request.flash:
+            url: https://michaelmkkelly.github.io/ESPHome-Config-for-localbytes-plug-pm/latest-binary/lb-bulb-installer-firmware.bin.gz            
+            md5_url: https://michaelmkkelly.github.io/ESPHome-Config-for-localbytes-plug-pm/latest-binary/lb-bulb-installer-firmware.bin.gz.mdz
+
+  - platform: template
+    name: "Install MK's Localbytes Plug FW"    
+    on_press: 
+        - ota.http_request.flash:
+            url:  https://michaelmkkelly.github.io/ESPHome-Config-for-localbytes-plug-pm/latest-binary/localbytes-plug-pm-firmware.bin.gz
+            md5_url: https://michaelmkkelly.github.io/ESPHome-Config-for-localbytes-plug-pm/latest-binary/localbytes-plug-pm-firmware.bin.gz.mdz
+
+  - platform: template
+    name: "Install Tasmota Lite 15.5.0"
+    on_press: 
+      then:  
+        - ota.http_request.flash:
+            url: https://ota.tasmota.com/tasmota/release-15.5.0/tasmota-lite.bin.gz
+            md5: "0ae87f0cefcb6815907d0153462d055e"
