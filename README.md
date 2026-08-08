@@ -42,7 +42,7 @@ It comes out of the box with either ESPHome or Tasmota Firmware as selected at t
 This is not currently able to be implemented due to limitations of the hardware, The firmware becomes too big. This may in theory be possible if I drop IPv6 Support but on balance I believe that IPv6 is more useful.
 
 ### Actions to flash to alternate firmwares directly.
-Due to hardware limits this is something that is currently hard to implement.
+Due to hardware limits this is something that is currently hard to implement. There is however a installer config file which does make it easier if you wish to swap to an alternate firmware.
 
 ## Install Instructions
 ### From a Plug running ESPHome Already
