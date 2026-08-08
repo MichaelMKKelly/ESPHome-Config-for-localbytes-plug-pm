@@ -31,6 +31,7 @@ It comes out of the box with either ESPHome or Tasmota Firmware as selected at t
     - Always On
     - Restore Power Off State
 - Integrated Update System to stay up to date with the latest releases of the firmware without rebuilding it yourself.
+- Both daily and total energy usage sensors.
 - Factory Reset by power cycling 7 times within 10 seconds of each cycle.
 - Combined calibration action call that can set any or all calibration multipliers in a single action call.
 - Action call to perform a delayed power cycle of an attached device in specified seconds. This is a great tool if you need to reboot a network device which allows you to connect to the plug so turning it off would result in you unable to turn it back on. This happens entirely on the device so if the network connection is lost it will not interrupt it turning back on after the specified time.
