@@ -2,7 +2,7 @@ substitutions:
   name: "lb-plug-installer"
   friendly_name: "Localbytes Plug PM"
   main_icon: "power-socket-uk"
-  version_number: "0.2.0"
+  version_number: "1.0.0"
   device_comment: "V${version_number} - Designed to install more useful Firmware - by MichaelMKKelly."
   wifi_min_auth: "WPA"
   ipv6_enable: "true"

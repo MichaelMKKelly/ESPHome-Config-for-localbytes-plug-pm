@@ -1,14 +1,14 @@
 {
   "name": "LocalBytes Plug PM",
-  "version": "0.2.1",
+  "version": "1.0.0",
   "builds": [
     {
       "chipFamily": "ESP8266",
       "ota": {
-        "md5": "406e9e9fee8c58bd48d16559acb1e9d3",
+        "md5": "cd0874500cc32cbcaeb3f424e7a7dab9",
         "path": "https://michaelmkkelly.github.io/ESPHome-Config-for-localbytes-plug-pm/latest-binary/localbytes-plug-pm-firmware.bin.gz",
-        "release_url": "https://github.com/MichaelMKKelly/ESPHome-Config-for-localbytes-plug-pm",
-        "summary": "0.2.1 test"
+        "release_url": "https://github.com/MichaelMKKelly/ESPHome-Config-for-localbytes-plug-pm/releases/tag/1.0.0",
+        "summary": "1.0.0 Initial Release - Built on ESPHome 2026.7.4"
       }
     }
   ]

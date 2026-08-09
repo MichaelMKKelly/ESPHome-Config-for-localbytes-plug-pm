@@ -2,7 +2,7 @@ substitutions:
   name: "localbytes-plug-pm-min"
   friendly_name: "Localbytes Plug PM"
   main_icon: "power-socket-uk"  
-  version_number: "0.2.1"
+  version_number: "1.0.0"
   device_comment: "ESPHome for LocalBytes Plug PM, Firmware config by MichaelMKKelly."
   wifi_min_auth: "WPA"
   wifi_fast_connect: "false"
