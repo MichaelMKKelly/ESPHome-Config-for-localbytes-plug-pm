@@ -78,8 +78,8 @@ button:
     on_press: 
       then:
         - ota.http_request.flash:
-            url: https://michaelmkkelly.github.io/ESPHome-Config-for-localbytes-plug-pm/latest-binary/lb-bulb-installer-firmware.bin.gz            
-            md5_url: https://michaelmkkelly.github.io/ESPHome-Config-for-localbytes-plug-pm/latest-binary/lb-bulb-installer-firmware.bin.gz.mdz
+            url: https://michaelmkkelly.github.io/ESPHome-Config-for-localbytes-plug-pm/latest-binary/lb-plug-installer-firmware.bin.gz            
+            md5_url: https://michaelmkkelly.github.io/ESPHome-Config-for-localbytes-plug-pm/latest-binary/lb-plug-installer-firmware.bin.gz.mdz
 
   - platform: template
     name: "Install MK's Localbytes Plug FW"    
