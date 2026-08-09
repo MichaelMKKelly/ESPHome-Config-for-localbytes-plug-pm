@@ -79,14 +79,14 @@ button:
       then:
         - ota.http_request.flash:
             url: https://michaelmkkelly.github.io/ESPHome-Config-for-localbytes-plug-pm/latest-binary/lb-plug-installer-firmware.bin.gz            
-            md5_url: https://michaelmkkelly.github.io/ESPHome-Config-for-localbytes-plug-pm/latest-binary/lb-plug-installer-firmware.bin.gz.mdz
+            md5_url: https://michaelmkkelly.github.io/ESPHome-Config-for-localbytes-plug-pm/latest-binary/lb-plug-installer-firmware.bin.gz.md5
 
   - platform: template
     name: "Install MK's Localbytes Plug FW"    
     on_press: 
         - ota.http_request.flash:
             url:  https://michaelmkkelly.github.io/ESPHome-Config-for-localbytes-plug-pm/latest-binary/localbytes-plug-pm-firmware.bin.gz
-            md5_url: https://michaelmkkelly.github.io/ESPHome-Config-for-localbytes-plug-pm/latest-binary/localbytes-plug-pm-firmware.bin.gz.mdz
+            md5_url: https://michaelmkkelly.github.io/ESPHome-Config-for-localbytes-plug-pm/latest-binary/localbytes-plug-pm-firmware.bin.gz.md5
 
   - platform: template
     name: "Install Tasmota Lite 15.5.0"
